@@ -28,8 +28,11 @@ class FasterRCNNBase(nn.Module):
     def __init__(self, backbone, rpn, roi_heads, transform):
         super(FasterRCNNBase, self).__init__()
         self.transform = transform
+        # 特征提取网络
         self.backbone = backbone
+        # 区域建议生成网络
         self.rpn = rpn
+        # ROI pooling层+two MLPHead +分类回归网络
         self.roi_heads = roi_heads
         # used only on torchscript mode
         self._has_warned = False

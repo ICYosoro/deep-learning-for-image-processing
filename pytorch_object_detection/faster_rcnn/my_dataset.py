@@ -11,6 +11,12 @@ class VOCDataSet(Dataset):
     """读取解析PASCAL VOC2007/2012数据集"""
 
     def __init__(self, voc_root, year="2012", transforms=None, txt_name: str = "train.txt"):
+        """
+        :param voc_root: VOC数据集根目录
+        :param year: 数据集年份，"2007"或"2012"
+        :param transforms: 数据预处理
+        :param txt_name: 文件分类的名字train.txt or val.txt
+        """
         assert year in ["2007", "2012"], "year must be in ['2007', '2012']"
         # 增加容错能力
         if "VOCdevkit" in voc_root:
@@ -25,6 +31,7 @@ class VOCDataSet(Dataset):
         assert os.path.exists(txt_path), "not found {} file.".format(txt_name)
 
         with open(txt_path) as read:
+            # 标注路径列表
             xml_list = [os.path.join(self.annotations_root, line.strip() + ".xml")
                         for line in read.readlines() if len(line.strip()) > 0]
 
@@ -48,7 +55,7 @@ class VOCDataSet(Dataset):
 
         assert len(self.xml_list) > 0, "in '{}' file does not find any information.".format(txt_path)
 
-        # read class_indict
+        # read class_indict 类别文件
         json_file = './pascal_voc_classes.json'
         assert os.path.exists(json_file), "{} file not exist.".format(json_file)
         with open(json_file, 'r') as f:
@@ -197,6 +204,7 @@ class VOCDataSet(Dataset):
 
     @staticmethod
     def collate_fn(batch):
+        # 图片信息在一起进行打包, target信息在一起进行打包
         return tuple(zip(*batch))
 
 # import transforms
