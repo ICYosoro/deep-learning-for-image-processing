@@ -59,8 +59,8 @@ def main():
 
     VOC_root = "../../data_set"  # VOCdevkit
     aspect_ratio_group_factor = 3
-    batch_size = 8
-    amp = False  # 是否使用混合精度训练，需要GPU支持
+    batch_size = 4
+    amp = True  # 是否使用混合精度训练，需要GPU支持
 
     # check voc root
     if os.path.exists(os.path.join(VOC_root, "VOCdevkit")) is False:
@@ -81,6 +81,7 @@ def main():
         train_batch_sampler = GroupedBatchSampler(train_sampler, group_ids, batch_size)
 
     nw = min([os.cpu_count(), batch_size if batch_size > 1 else 0, 8])  # number of workers
+    nw = 10
     print('Using %g dataloader workers' % nw)
 
     # 注意这里的collate_fn是自定义的，因为读取的数据包括image和targets，不能直接使用默认的方法合成batch

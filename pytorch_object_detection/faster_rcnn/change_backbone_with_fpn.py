@@ -17,7 +17,7 @@ def create_model(num_classes):
 
     # --- mobilenet_v3_large fpn backbone --- #
     backbone = torchvision.models.mobilenet_v3_large(pretrained=True)
-    # print(backbone)
+    print(backbone)
     return_layers = {"features.6": "0",   # stride 8
                      "features.12": "1",  # stride 16
                      "features.16": "2"}  # stride 32
@@ -215,7 +215,7 @@ if __name__ == "__main__":
     # 训练设备类型
     parser.add_argument('--device', default='cuda:0', help='device')
     # 训练数据集的根目录(VOCdevkit)
-    parser.add_argument('--data-path', default='./', help='dataset')
+    parser.add_argument('--data-path', default='../../data_set', help='dataset')
     # 检测目标类别数(不包含背景)
     parser.add_argument('--num-classes', default=20, type=int, help='num_classes')
     # 文件保存地址

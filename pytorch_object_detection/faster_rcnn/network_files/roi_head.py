@@ -201,7 +201,7 @@ class RoIHeads(torch.nn.Module):
         list元素个数为batch_size
         Args:
             proposals: rpn预测的boxes
-            targets:
+            targets: gt_boxes以及gt_labels
 
         Returns:
 

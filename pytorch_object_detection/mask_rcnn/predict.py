@@ -31,8 +31,8 @@ def time_synchronized():
 def main():
     num_classes = 90  # 不包含背景
     box_thresh = 0.5
-    weights_path = "./save_weights/model_25.pth"
-    img_path = "./test.jpg"
+    weights_path = "../../backbone_weights/maskrcnn_resnet50_fpn_coco.pth"
+    img_path = "./airplane-home-texas.webp"
     label_json_path = './coco91_indices.json'
 
     # get devices

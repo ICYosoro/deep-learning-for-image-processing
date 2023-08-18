@@ -105,11 +105,12 @@ def encode_boxes(reference_boxes, proposals, weights):
 
     # unsqueeze()
     # Returns a new tensor with a dimension of size one inserted at the specified position.
+    #proposals Box
     proposals_x1 = proposals[:, 0].unsqueeze(1)
     proposals_y1 = proposals[:, 1].unsqueeze(1)
     proposals_x2 = proposals[:, 2].unsqueeze(1)
     proposals_y2 = proposals[:, 3].unsqueeze(1)
-
+    # gt Box
     reference_boxes_x1 = reference_boxes[:, 0].unsqueeze(1)
     reference_boxes_y1 = reference_boxes[:, 1].unsqueeze(1)
     reference_boxes_x2 = reference_boxes[:, 2].unsqueeze(1)
@@ -398,6 +399,11 @@ def smooth_l1_loss(input, target, beta: float = 1. / 9, size_average: bool = Tru
     """
     very similar to the smooth_l1_loss from pytorch, but with
     the extra beta parameter
+    Args:
+        input: predictions
+        target: gt
+        beta: float, used for weighting
+        size_average: bool, if true, loss is mean over all batch elements
     """
     n = torch.abs(input - target)
     # cond = n < beta

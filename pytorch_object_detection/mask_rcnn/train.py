@@ -20,13 +20,13 @@ def create_model(num_classes, load_pretrain_weights=True):
     # backbone = resnet50_fpn_backbone(norm_layer=FrozenBatchNorm2d,
     #                                  trainable_layers=3)
     # resnet50 imagenet weights url: https://download.pytorch.org/models/resnet50-0676ba61.pth
-    backbone = resnet50_fpn_backbone(pretrain_path="resnet50.pth", trainable_layers=3)
+    backbone = resnet50_fpn_backbone(pretrain_path="../../backbone_weights/resnet50.pth", trainable_layers=3)
 
     model = MaskRCNN(backbone, num_classes=num_classes)
 
     if load_pretrain_weights:
         # coco weights url: "https://download.pytorch.org/models/maskrcnn_resnet50_fpn_coco-bf2d0c1e.pth"
-        weights_dict = torch.load("./maskrcnn_resnet50_fpn_coco.pth", map_location="cpu")
+        weights_dict = torch.load("../../backbone_weights/maskrcnn_resnet50_fpn_coco.pth", map_location="cpu")
         for k in list(weights_dict.keys()):
             if ("box_predictor" in k) or ("mask_fcn_logits" in k):
                 del weights_dict[k]
@@ -55,9 +55,9 @@ def main(args):
 
     # load train data set
     # coco2017 -> annotations -> instances_train2017.json
-    train_dataset = CocoDetection(data_root, "train", data_transform["train"])
+    # train_dataset = CocoDetection(data_root, "train", data_transform["train"])
     # VOCdevkit -> VOC2012 -> ImageSets -> Main -> train.txt
-    # train_dataset = VOCInstances(data_root, year="2012", txt_name="train.txt", transforms=data_transform["train"])
+    train_dataset = VOCInstances(data_root, year="2012", txt_name="train.txt", transforms=data_transform["train"])
     train_sampler = None
 
     # 是否按图片相似高宽比采样图片组成batch
@@ -72,6 +72,7 @@ def main(args):
     # 注意这里的collate_fn是自定义的，因为读取的数据包括image和targets，不能直接使用默认的方法合成batch
     batch_size = args.batch_size
     nw = min([os.cpu_count(), batch_size if batch_size > 1 else 0, 8])  # number of workers
+    nw = 10
     print('Using %g dataloader workers' % nw)
 
     if train_sampler:
@@ -91,9 +92,9 @@ def main(args):
 
     # load validation data set
     # coco2017 -> annotations -> instances_val2017.json
-    val_dataset = CocoDetection(data_root, "val", data_transform["val"])
+    # val_dataset = CocoDetection(data_root, "val", data_transform["val"])
     # VOCdevkit -> VOC2012 -> ImageSets -> Main -> val.txt
-    # val_dataset = VOCInstances(data_root, year="2012", txt_name="val.txt", transforms=data_transform["val"])
+    val_dataset = VOCInstances(data_root, year="2012", txt_name="val.txt", transforms=data_transform["val"])
     val_data_loader = torch.utils.data.DataLoader(val_dataset,
                                                   batch_size=1,
                                                   shuffle=False,
@@ -194,9 +195,9 @@ if __name__ == "__main__":
     # 训练设备类型
     parser.add_argument('--device', default='cuda:0', help='device')
     # 训练数据集的根目录
-    parser.add_argument('--data-path', default='/data/coco2017', help='dataset')
+    parser.add_argument('--data-path', default='../../data_set/', help='dataset')
     # 检测目标类别数(不包含背景)
-    parser.add_argument('--num-classes', default=90, type=int, help='num_classes')
+    parser.add_argument('--num-classes', default=20, type=int, help='num_classes')
     # 文件保存地址
     parser.add_argument('--output-dir', default='./save_weights', help='path where to save')
     # 若需要接着上次训练，则指定上次训练保存权重文件地址
@@ -223,12 +224,12 @@ if __name__ == "__main__":
     # 针对torch.optim.lr_scheduler.MultiStepLR的参数
     parser.add_argument('--lr-gamma', default=0.1, type=float, help='decrease lr by a factor of lr-gamma')
     # 训练的batch size(如果内存/GPU显存充裕，建议设置更大)
-    parser.add_argument('--batch_size', default=2, type=int, metavar='N',
+    parser.add_argument('--batch_size', default=4, type=int, metavar='N',
                         help='batch size when training.')
     parser.add_argument('--aspect-ratio-group-factor', default=3, type=int)
     parser.add_argument("--pretrain", type=bool, default=True, help="load COCO pretrain weights.")
     # 是否使用混合精度训练(需要GPU支持混合精度)
-    parser.add_argument("--amp", default=False, help="Use torch.cuda.amp for mixed precision training")
+    parser.add_argument("--amp", default=True, help="Use torch.cuda.amp for mixed precision training")
 
     args = parser.parse_args()
     print(args)

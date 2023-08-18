@@ -399,6 +399,7 @@ class GeneralizedRCNNTransform(nn.Module):
         Returns:
 
         """
+        # 训练时直接返回
         if self.training:
             return result
 

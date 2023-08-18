@@ -4,7 +4,7 @@ import time
 
 import torch
 
-import train_utils.distributed_utils as utils
+from . import distributed_utils as utils
 from .coco_eval import EvalCOCOMetric
 
 
